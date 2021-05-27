@@ -1,0 +1,34 @@
+{
+  "name": "end",
+  "version": "0.0.0",
+  "description": "Multi-functional discord bot.",
+  "main": "index.ts",
+  "scripts": {
+    "test": "test.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kristalkill/END.git"
+  },
+  "author": "END",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Kristalkill/END/issues"
+  },
+  "homepage": "https://github.com/Kristalkill/END#readme",
+  "devDependencies": {
+    "@types/node": "^15.6.1",
+    "eslint": "^7.27.0",
+    "typescript": "^4.3.2"
+  },
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "dotenv": "^10.0.0",
+    "humanize-duration": "^3.26.0",
+    "mongodb": "^3.6.9",
+    "natural": "^5.0.3",
+    "node-fetch": "^2.6.1",
+    "os-utils": "^0.0.14",
+    "shoukaku": "^1.6.4"
+  }
+}
