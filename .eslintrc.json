@@ -1,5 +1,4 @@
 {
-  "extends": "eslint-config-aqua/prettier/node",
   "parserOptions": {
     "ecmaVersion": 2020
   },
