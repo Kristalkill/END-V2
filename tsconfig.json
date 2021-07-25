@@ -1,0 +1,55 @@
+{
+  "compilerOptions": {
+    "outDir": "build",
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "target": "ES2020",
+    /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "lib": [
+      "es2020",
+      "dom",
+      "es5",
+      "es6",
+      "dom.iterable"
+    ],
+    "sourceMap": true,
+    "types": [
+      // add node as an option
+      "node"
+    ],
+    "typeRoots": [
+      // add path to @types
+      "node_modules/@types"
+    ],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@kernel/*": [
+        "src/bot/kernel/*"
+      ],
+      "@classes/*": [
+        "src/bot/Constructions/Classes/*"
+      ],
+      "@interfaces/*": [
+        "src/bot/Constructions/Interfaces/*"
+      ],
+      "@util/*": [
+        "src/bot/Util/*"
+      ],
+      "@languages/*": [
+        "src/bot/languages/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
