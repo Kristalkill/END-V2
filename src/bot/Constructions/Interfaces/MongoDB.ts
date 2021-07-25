@@ -1,4 +1,4 @@
-import {Snowflake} from "discord.js";
+import { Snowflake } from 'discord.js'
 
 interface Guild_Moderation {
     auto: boolean

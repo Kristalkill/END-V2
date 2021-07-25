@@ -1,4 +1,4 @@
-import {PermissionResolvable} from 'discord.js'
+import { PermissionResolvable } from 'discord.js'
 
 export interface Config {
     token: string

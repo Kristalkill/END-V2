@@ -1,4 +1,4 @@
-import {Guild_Interface, User_Interface} from '@interfaces/MongoDB'
+import { Guild_Interface, User_Interface } from '@interfaces/MongoDB'
 
 declare global {
     namespace Intl {

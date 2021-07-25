@@ -1,7 +1,7 @@
-import {Message, PermissionResolvable} from 'discord.js'
-import Client from "../../kernel/Client";
-import Embed from "../Classes/Embed";
-import Language from "../../languages/Language";
+import { Message, PermissionResolvable } from 'discord.js'
+import Client from '../../kernel/Client'
+import Embed from '../Classes/Embed'
+import Language from '../../languages/Language'
 
 export interface Command_Permissions {
     bot: PermissionResolvable
@@ -34,4 +34,3 @@ export interface Command_Interface {
 
     run(message: Message, args: string[]): Promise<Error | void | Message>
 }
-

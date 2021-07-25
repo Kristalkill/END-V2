@@ -1,7 +1,7 @@
-import {Message, MessageEmbed, MessageEmbedOptions} from 'discord.js'
+import { Message, MessageEmbed, MessageEmbedOptions } from 'discord.js'
 
 export default class Embed {
-    /* chunk(title, content) {
+  /* chunk(title, content) {
       if (content.length < 1024) {
         this.fields.push({
           name: title,
@@ -22,35 +22,35 @@ export default class Embed {
       return this;
     }
      */
-    async basic(options: MessageEmbedOptions, {guild: {me}, channel}: Message): Promise<Message> {
-        return await channel.send(new MessageEmbed({...options}).setFooter(`${me.user.tag} | ${me.user.username}`, me.user.displayAvatarURL({
-            format: 'png',
-            dynamic: true
-        })).setTimestamp())
-    }
+  async basic (options: MessageEmbedOptions, { guild: { me }, channel }: Message): Promise<Message> {
+    return await channel.send(new MessageEmbed({ ...options }).setFooter(`${me.user.tag} | ${me.user.username}`, me.user.displayAvatarURL({
+      format: 'png',
+      dynamic: true
+    })).setTimestamp())
+  }
 
-    async okay(content: string, message: Message): Promise<Message> {
-        return this.basic({
-            color: '#1bff02',
-            title: 'OK',
-            description: content
-        }, message)
-    }
+  async okay (content: string, message: Message): Promise<Message> {
+    return this.basic({
+      color: '#1bff02',
+      title: 'OK',
+      description: content
+    }, message)
+  }
 
-    async error(content: string, message: Message): Promise<Message> {
-        return this.basic({
-            color: '#f80404',
-            title: 'Error',
-            description: content
-        }, message)
-    }
+  async error (content: string, message: Message): Promise<Message> {
+    return this.basic({
+      color: '#f80404',
+      title: 'Error',
+      description: content
+    }, message)
+  }
 
-    async fun(title: string, message: Message, url?: string | null, description?: string): Promise<Message> {
-        return this.basic({
-            color: '#0054ff',
-            title: title,
-            description: description,
-            image: {url}
-        }, message)
-    }
+  async fun (title: string, message: Message, url?: string | null, description?: string): Promise<Message> {
+    return this.basic({
+      color: '#0054ff',
+      title: title,
+      description: description,
+      image: { url }
+    }, message)
+  }
 }

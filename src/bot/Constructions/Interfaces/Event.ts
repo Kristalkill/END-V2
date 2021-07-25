@@ -1,5 +1,5 @@
-import Client from "../../kernel/Client";
-import {ClientEvents} from "discord.js";
+import Client from '../../kernel/Client'
+import { ClientEvents } from 'discord.js'
 
 export interface Event_Interface {
     client: Client
