@@ -5,9 +5,9 @@ import API from './api/server'
 config()
 
 export class Manager extends ShardingManager {
-    private api: API;
+    public api!: API;
 
-    constructor () {
+    public constructor () {
       super(__dirname + '/bot/index.js', {
         totalShards: 1,
         token: process.env.TOKEN,
@@ -30,11 +30,10 @@ export class Manager extends ShardingManager {
       })
     }
 
-    start (): void {
+    public start (): void {
       this.spawn(this.totalShards).then(() => {
         this.api = new API(this)
       })
     }
 }
-
 new Manager().start()

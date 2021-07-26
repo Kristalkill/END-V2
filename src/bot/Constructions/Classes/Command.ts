@@ -1,14 +1,32 @@
-import { Command_Basic, Command_Interface, Command_Permissions, Command_Settings } from '@interfaces/Command'
-import { CollectorFilter, Guild, GuildChannel, GuildMember, Message, MessageEmbed, Role } from 'discord.js'
-import Client from '../../kernel/Client'
+import {
+    Command_Basic,
+    Command_Interface,
+    Command_Permissions,
+    command_return,
+    Command_Settings
+} from '@interfaces/Command'
+import {
+    Collection,
+    CollectorFilter, DMChannel,
+    Guild,
+    GuildChannel,
+    GuildMember,
+    Message,
+    MessageEmbed, NewsChannel,
+    Role,
+    Snowflake, TextChannel,
+    User
+} from 'discord.js'
+import Client from '@kernel/Client'
 import * as natural from 'natural'
 import Embed from './Embed'
-import Language from '../../languages/Language'
-import { User_basic } from '@util/Base Values/MongoDB'
-import { User_Interface } from '@interfaces/MongoDB'
+import * as English from '@languages/en'
+import Language from '@languages/Language'
+import {Guild_Interface, User_Interface} from '@interfaces/MongoDB'
+import {User_basic} from "@util/Base Values/MongoDB";
 
 export default class Command implements Command_Interface {
-    public language: Language;
+    public language: Language = English
     public permissions: Command_Permissions = {
       bot: [],
       user: []
@@ -18,10 +36,9 @@ export default class Command implements Command_Interface {
     public basic: Command_Basic = {
       aliases: []
     }
-
     public embed: Embed = this.client.embed;
     public settings: Command_Settings = {
-      public: true,
+      community: true,
       nsfw: false,
       author: false,
       no_bots: true,
@@ -29,31 +46,40 @@ export default class Command implements Command_Interface {
     };
 
     public stop?: boolean = false;
+    public guild!: Guild_Interface
+    public user!: User_Interface
 
-    public constructor (readonly client: Client) {
+    public constructor (public client: Client) {}
+
+    public async run(_message: Message, _args: string[]): Promise<command_return> {
+        throw new Error('Method not implemented.')
     }
 
-    name_sort (map_filtered: string[], value: string): string[] {
-      return map_filtered.sort((a, b) => natural.JaroWinklerDistance(value, b) - natural.JaroWinklerDistance(value, a))
+    public name_sort(map_filtered: string[] | undefined, value: string): string | undefined {
+        if(!map_filtered) return;
+        return map_filtered.sort((a, b) => natural.JaroWinklerDistance(value, b) - natural.JaroWinklerDistance(value, a))[0]
     }
 
-    run (message: Message, args: string[]): Promise<Error | void | Message> {
-
+    public async check_member (channel: TextChannel | NewsChannel | DMChannel,authorID:string, member: GuildMember | undefined): Promise<boolean> {
+        this.stop = true
+        if (this.settings.author === false) {
+            if (!member) await this.embed.error(this.language.basically.no_member, channel)
+            else if (member.id === authorID) await this.embed.error(this.language.basically.no_author, channel)
+            else {
+                this.stop = false
+                return true
+            }
+        } else {
+            if (this.settings.no_bots === true && member.user.bot) await this.embed.error(this.language.basically.bot, channel)
+            else {
+                this.stop = false
+                return true
+            }
+        }
+        return false
     }
 
-    async check_member (message: Message, member: GuildMember): Promise<boolean | void> {
-      this.stop = true
-      if (!member) await this.embed.error(this.language.basically.no_member, message)
-      else if (this.settings.no_bots === true && member.user.bot) await this.embed.error(this.language.basically.bot, message)
-      else if (this.settings.author === false && member.id === message.author.id) await this.embed.error(this.language.basically.no_author, message)
-      else {
-        this.stop = false
-        return true
-      }
-      return false
-    }
-
-    async get_data (guild_id: string, member_id: string): Promise<User_Interface> {
+    protected async get_data (guild_id: string, member_id: string): Promise<User_Interface> {
       let data = await this.client.db.getOne<User_Interface>('users', {
         guildID: guild_id,
         userID: member_id
@@ -68,66 +94,69 @@ export default class Command implements Command_Interface {
       return data
     }
 
-    async member (message: Message, user_args: string | null): Promise<GuildMember | null> {
-      const member: GuildMember = (message.guild.member(message.mentions.users.filter(m => m.id !== message.guild.me.id).first() || user_args)) || (await get_member(this))
+    protected async member ({mentions, guild, channel, authorID } : {mentions:Collection<string,User>, guild:Guild,channel:TextChannel|NewsChannel|DMChannel, authorID:Snowflake}, user_args?: string): Promise<GuildMember | undefined> {
+      const user:User | Snowflake = mentions.filter((m: User) => m.id !== this.client?.user?.id).first() || (user_args ?? '')
+      const member: GuildMember| undefined = (guild?.member(user)) || (await get_member(this))
 
       async function get_member (command: Command) {
-        if (!user_args) return null
-        const cache = message.guild.members.cache
-        const fined = command.name_sort(cache.map(x => (x.nickname || x.user.username)), user_args)[0]
+        if (!user_args) return;
+        const cache = guild?.members.cache
+        const names = cache?.map((x:GuildMember) => (x.nickname || x.user.username))
+        const fined = command.name_sort(names, user_args)
+        if(!fined) return;
         if (natural.JaroWinklerDistance(fined, user_args) > 0.7) {
-          return cache.find(x => (x.nickname || x.user.username) === fined)
+          return cache?.find((x:GuildMember) => (x.nickname || x.user.username) === fined)
         }
       }
-
-      if (await this.check_member(message, member) === true) return member
+      if (await this.check_member(channel, authorID, member)) return member
     }
 
-    async Channel (message: Message, channel_args: string | null): Promise<GuildChannel | undefined> {
-      const channel = message.guild.channels.cache.get(channel_args) || message.mentions.channels.first()
-      if (channel) return channel
+    protected async Channel (guild: Guild, mentions:Collection<string,GuildChannel>,channel: TextChannel | NewsChannel | DMChannel, channel_args: string | null): Promise<TextChannel | NewsChannel | undefined> {
+      const _channel = guild?.channels.cache.get(channel_args || '') || mentions.first()
+      if (_channel) return _channel as TextChannel | NewsChannel
       else {
         this.stop = true
-        await this.embed.error('Provide channel', message)
+        await this.embed.error('Provide channel', channel)
       }
     }
 
-    async Role (message: Message, role_args: string | null): Promise<Role | undefined> {
-      const role = message.guild.roles.cache.get(role_args) || message.mentions.roles.first() || undefined
+    protected async Role (guild: Guild, mentions:Collection<string,Role>,channel: TextChannel | NewsChannel | DMChannel,role_args: string | null, check = true): Promise<Role | undefined> {
+      const role = guild?.roles.cache.get(role_args || '') || mentions.first() || undefined
       if (role) return role
-      else {
+      else if(check === true) {
         this.stop = true
-        await this.embed.error('Provide role', message)
+        await this.embed.error('Provide role', channel)
       }
     }
 
-    Guild (id: string): Guild | undefined {
+    protected Guild (id: string): Guild | undefined {
       return this.client.guilds.cache.get(id)
     }
 
-    async fetch (args: string): Promise<string> {
+    protected async fetch (args: string): Promise<string> {
       return await fetch(args).then((r: Response) => r.json()).then(r => r.image || r.url)
     }
 
-    protected async paginate (message: Message, pages: Map<number, MessageEmbed>, emojis: string[]): Promise<void> {
+    protected async paginate (channel: TextChannel | NewsChannel | DMChannel, guild: Guild , author:User, pages: Map<number, MessageEmbed>, emojis: string[]): Promise<void> {
       let page = 1
-      const msg = await message.channel.send(pages.get(page))
+      const msg = await channel.send(pages.get(1) as MessageEmbed)
       for (const emoji of emojis) {
         await msg.react(emoji)
       }
-      const filter: CollectorFilter = (reaction, user) => user.id === message.author.id
+      const filter: CollectorFilter = (_reaction, user) => user.id === author.id
       const collector = msg.createReactionCollector(filter, {
-        time: 6000
+        time: 60000
       })
-      collector.on('collect', async (reaction) => {
+        const hasPermission = guild.me.hasPermission('MANAGE_MESSAGES')
+        collector.on('collect', async (reaction) => {
         switch (reaction.emoji.name) {
           case 'rewind':
             page = 1
-            await msg.edit(pages.get(page))
+            await msg.edit(pages.get(page) as MessageEmbed)
             break
           case 'arrow_left':
             page === 1 ? (page = pages.size) : page--
-            await msg.edit(pages.get(page))
+            await msg.edit(pages.get(page) as MessageEmbed)
             break
           case 'smart_button':
             await collector.stop('User want it')
@@ -135,19 +164,19 @@ export default class Command implements Command_Interface {
             break
           case 'arrow_right':
             page === pages.size ? (page = 1) : page++
-            await msg.edit(pages.get(page))
+            await msg.edit(pages.get(page) as MessageEmbed)
             break
           case 'fast_forward':
             page = pages.size
-            await msg.edit(pages.get(page))
+            await msg.edit(pages.get(page) as MessageEmbed)
             break
           default:
             await reaction.remove()
         }
-        if (message.guild.me.hasPermission('MANAGE_MESSAGES')) return reaction.users.remove(message.author.id)
+        if (hasPermission) return reaction.users.remove(author.id)
       })
       collector.on('end', async () => {
-        if (message.guild.me.hasPermission('MANAGE_MESSAGES')) {
+        if (hasPermission) {
           await msg.reactions.removeAll()
         }
       })

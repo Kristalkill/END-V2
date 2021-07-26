@@ -3,7 +3,7 @@ import Command from '@classes/Command'
 import { humanizeDuration } from '../../index'
 
 export default class BotInfo extends Command {
-  async run (message: Message): Promise<void | Message> {
+  public async run ({guild, channel, createdTimestamp}: Message): Promise<Message> {
     const shard = this.client.shard
     const reducer = (accumulator: number, currentValue: number) => accumulator + currentValue
     const [cpu, memory, channels, guilds, emojis, users, ping] = [
@@ -15,9 +15,9 @@ export default class BotInfo extends Command {
       (await shard.fetchClientValues('users.cache.size')).reduce(reducer),
       (await shard.fetchClientValues('ws.ping')).reduce(reducer) / shard.ids.length
     ].flat()
-    return message.channel.send(new MessageEmbed().setTitle('**Показатели бота**')
+    return channel.send(new MessageEmbed().setTitle('**Показатели бота**')
       .setColor('RANDOM')
-      .setThumbnail(message.guild.me.user.displayAvatarURL())
+      .setThumbnail(guild.me.user.displayAvatarURL())
       .addField(
         '**Technical**',
                 `>>> **<:cpu:709750871692542142> | CPU:** ${cpu.toFixed(2)}%
@@ -25,7 +25,7 @@ export default class BotInfo extends Command {
               **🕑 | Uptime:**  ${humanizeDuration.humanize(this.client.uptime, { round: true, language: 'en' })}
               **⚙ | Command Count:**  ${this.client.commands.size}
               **💡 | Discord.js:**  v${version}
-              **Discord API:** ${new Date().getTime() - message.createdTimestamp}ms
+              **Discord API:** ${new Date().getTime() - createdTimestamp}ms
               **Bot Ping:** ${ping}ms.`,
                 true
       )

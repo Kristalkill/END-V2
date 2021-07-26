@@ -1,12 +1,6 @@
-import Client from '@kernel/Client'
-import { GuildMember, Message, PermissionResolvable, PermissionString, TextChannel } from 'discord.js'
-import { Command_Permissions } from '@interfaces/Command'
 
 export default class Util {
-  constructor (private client: Client) {
-  }
-
-  trimArray (arr: string[], maxLen = 10): string[] {
+  public trimArray (arr: string[], maxLen = 10): string[] | undefined {
     let array
     if (arr.length > maxLen) {
       const len = arr.length - maxLen
@@ -16,30 +10,20 @@ export default class Util {
     return array
   }
 
-  formatBytes (bytes: number): string {
+  public formatBytes (bytes: number): string {
     if (bytes === 0) return '0 Bytes'
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
     const i = Math.floor(Math.log(bytes) / Math.log(1024))
     return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`
   }
-
-  formatPerms (perm: PermissionString): PermissionString {
-    return perm
-      .toLowerCase()
-      .replace(/(^|"|_)(\S)/g, (s: string) => s.toUpperCase())
-      .replace(/_/g, ' ')
-      .replace(/Guild/g, 'Server')
-      .replace(/Use Vad/g, 'Use Voice Activity') as PermissionString
-  }
-
-  removeDuplicates<T> (arr: []): T[] {
+  public removeDuplicates<T> (arr: []): T[] {
     return [...new Set(arr)]
   }
 
-  abbreviateNumber (number: number, digits = 2): string {
+  public abbreviateNumber (number: number, digits = 2): string {
     let expK = Math.floor(Math.log10(Math.abs(number)) / 3)
     let scaled = number / Math.pow(1000, expK)
-    if (Math.abs(+scaled.toFixed(digits)) >= 1000) {
+    if (Math.abs(Number(scaled.toFixed(digits))) >= 1000) {
       scaled /= 1000
       expK += 1
     }
@@ -55,7 +39,7 @@ export default class Util {
     )
   }
 
-  formatDate (date: Date, language?: string): string {
+  public formatDate (date: Date, language?: string): string {
     const data = new Date(date)
     return data.toLocaleString(language || 'en', {
       day: '2-digit',
@@ -64,7 +48,7 @@ export default class Util {
     })
   }
 
-  formatArray (array: PermissionString[], type?: string): PermissionString[] {
+  public formatArray(array: ("CREATE_INSTANT_INVITE" | "KICK_MEMBERS" | "BAN_MEMBERS" | "ADMINISTRATOR" | "MANAGE_CHANNELS" | "MANAGE_GUILD" | "ADD_REACTIONS" | "VIEW_AUDIT_LOG" | "PRIORITY_SPEAKER" | "STREAM" | "VIEW_CHANNEL" | "SEND_MESSAGES" | "SEND_TTS_MESSAGES" | "MANAGE_MESSAGES" | "EMBED_LINKS" | "ATTACH_FILES" | "READ_MESSAGE_HISTORY" | "MENTION_EVERYONE" | "USE_EXTERNAL_EMOJIS" | "VIEW_GUILD_INSIGHTS" | "CONNECT" | "SPEAK" | "MUTE_MEMBERS" | "DEAFEN_MEMBERS" | "MOVE_MEMBERS" | "USE_VAD" | "CHANGE_NICKNAME" | "MANAGE_NICKNAMES" | "MANAGE_ROLES" | "MANAGE_WEBHOOKS" | "MANAGE_EMOJIS")[] | undefined, type?: string): string[] {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return new Intl.ListFormat('en-US', {
@@ -73,22 +57,11 @@ export default class Util {
     }).format(array)
   }
 
-  permission_check (member: GuildMember, permission: PermissionResolvable, message: Message): PermissionString[] {
-    return this.formatArray((message.channel as TextChannel).permissionsFor(member)
-      .missing(permission ? this.client.defaultPerms.add(permission) : this.client.defaultPerms).map(this.formatPerms))
-  }
-
-  managePerms (message: Message, command_permission: Command_Permissions): [PermissionString[], PermissionString[]] {
-    const user_missing = this.permission_check(message.member, command_permission.user, message)
-    const bot_missing = this.permission_check(message.guild.me, command_permission.bot, message)
-    return [bot_missing, user_missing]
-  }
-
-  randomize (min: number, max: number): number {
+  public randomize (min: number, max: number): number {
     return Math.floor(Math.random() * (max - min) + min)
   }
 
-  toNum (text: string): number {
-    return parseInt(text?.toString().replace(/[^\d]/g, ''))
+  public toNum (text: string): number {
+    return parseInt(text?.toString().replace(/[^\d]/g, ''), 10)
   }
 }

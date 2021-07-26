@@ -21,7 +21,7 @@ declare global {
 
         clear(): string;
 
-        translate<T>(vars: T): string;
+        translate<T>(this: string, vars: T): string;
 
         chunk(this: string, len: number): string[];
     }

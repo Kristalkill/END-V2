@@ -15,9 +15,9 @@ export default class Routes {
     public router = Router();
 
     public constructor (API: API) {
-      this.router.get('/', (req, res) => res.json({ hello: '' }))
-      this.router.get('/commands', async (req, res) => res.send(await API.commands()))
-      this.router.get('/stats', async (req, res) => res.send(await API.stats()))
+      this.router.get('/', (_req, res) => res.json({ hello: '' }))
+      this.router.get('/commands', async (_req, res) => res.send(await API.commands()))
+      this.router.get('/stats', async (_req, res) => res.send(await API.stats()))
       this.router.get('/auth', async (req, res) => {
         try {
           const key = await API.Client.getAccess(req.query.code.toString())
@@ -39,9 +39,9 @@ export default class Routes {
         }
       })
       this.router.use('/guilds', new Guilds_Routes(API).router)
-        .get('/login', (req, res) => res.redirect(API.Client.authCodeLink.url))
+        .get('/login', (_req, res) => res.redirect(API.Client.authCodeLink.url))
         .use('/user', new User_Router(API).router)
-        .get('*', (req, res) => res.status(404).json({ code: 404 }))
+        .get('*', (_req, res) => res.status(404).json({ code: 404 }))
     }
 }
 

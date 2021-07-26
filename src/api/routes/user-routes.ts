@@ -4,9 +4,9 @@ import API from '../server'
 import { User_Interface } from '@interfaces/MongoDB'
 
 export default class User_Router {
-    router = Router();
+    public router = Router();
 
-    constructor (API: API) {
+  public constructor (API: API) {
       this.router.get('/', async (req, res) => {
         try {
           const user = await API.Client.getUser(req.query.key as string)

@@ -22,8 +22,7 @@ String.prototype.chunk = function (this: string, len: number) {
   return result
 }
 String.prototype.translate = function (vars) {
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  let str = this
+  let str = this.toString()
   for (const [KEY, value] of Object.entries(vars)) {
     str = str.replace(new RegExp(`%${KEY}%`, 'g'), value)
   }

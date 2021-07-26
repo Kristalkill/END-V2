@@ -3,18 +3,17 @@ import { sendError } from './api-routes'
 import API from '../server'
 
 export default class Guilds_Routes {
-    router: Router = Router();
+  public router: Router = Router();
 
-    constructor (API: API) {
+  public constructor (API: API) {
       this.router.get('/', async (req, res) => {
         try {
           const user_guilds = await API.Client.getGuilds(req.query.key as string)
           const guilds = user_guilds.filter(g => {
-            return (g.isOwner || g.permissions.some(x => ['ADMINISTRATOR', 'MANAGE_GUILD'].includes(x))) === true
+            return (g.isOwner || g.permissions.some(x => ['ADMINISTRATOR', 'MANAGE_GUILD'].includes(x)))
           })
           for (const [id, guild] of guilds) {
-            guild.db = (await API.db_guilds()).find(x => x.guildID = id)
-            guild.icon = guild.iconUrl()
+            guild.db = (await API.db_guilds()).find(x => x.guildID === id)
             guild.hasbot = (await API.guilds()).has(guild.id)
           }
           res.send(Array.from(guilds.values()))

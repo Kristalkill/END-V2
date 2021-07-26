@@ -28,64 +28,59 @@ const permissionConstants = {
 }
 
 export default class Guild {
+    private static parsePermissions (perms: number) {
+        const p = []
+        // eslint-disable-next-line prefer-const
+        for (let [number, string] of Object.entries(permissionConstants)) {
+            if ((parseInt(number, 10) & perms) === perms) {
+                p.push(string)
+            }
+        }
+        return p
+    }
     /** The guild's unique discord ID. */
-    readonly id: string;
+    public readonly id: string;
     /** Name of the guild. */
-    readonly name: string;
+    public readonly name: string;
     /**  The guild's icon hash. */
-    readonly iconHash: string;
+    public readonly iconHash: string;
     /** A list of the discord-enabled features of the guild. */
-    readonly features: string[]
+    public readonly features: string[]
         /** Whether the authorized user is the guild's owner. */;
 
-    readonly isOwner: boolean;
+    public readonly isOwner: boolean;
     /** A list of permissions that the authorized user has in this guild. */
-    readonly permissions: string[];
+    public readonly permissions: string[];
 
-    public db: Guild_Interface
+    public db: Guild_Interface | undefined
 
     public icon: string;
-    hasbot: boolean;
+    public hasbot = false;
 
-    constructor ({ id, name, icon, features = [], owner = false, permissions = 0 }: Guild_Constructor) {
+    public constructor ({ id, name, icon, features = [], owner = false, permissions = 0 }: Guild_Constructor) {
       this.id = id
       this.name = name
       this.iconHash = icon
       this.features = features
       this.isOwner = owner
       this.permissions = Guild.parsePermissions(permissions)
+      this.icon  = this.iconUrl(icon)
     }
 
     /** The timestamp of creation of the user's account. */
-    get createdTimestamp (): number {
-      return parseInt((BigInt(this.id) >> BigInt(22)).toString()) + 1420070400000
+    public get createdTimestamp (): number {
+      return parseInt((BigInt(this.id) >> BigInt(22)).toString(), 10) + 1420070400000
     }
 
     /** The time of creation of the user's account. */
-    get createdAt (): Date {
+    public get createdAt (): Date {
       return new Date(this.createdTimestamp)
     }
-
-    private static parsePermissions (perms: number) {
-      const p = []
-      // eslint-disable-next-line prefer-const
-      for (let [number, string] of Object.entries(permissionConstants)) {
-        if ((parseInt(number) & perms) === perms) {
-          p.push(string)
-        }
-      }
-      return p
-    }
-
-    /**
-     * Returns a url to the guild icon.
-     * @param size The size of the icon in pixels. (Defaults to 512)
-     */
-    iconUrl (size = 512): string {
-      return this.iconHash
-        ? `https://cdn.discordapp.com/icons/${this.id}/${this.iconHash}.${
-                this.iconHash.startsWith('a_') ? 'gif' : 'png'}?size=${size}`
-        : 'https://i.imgur.com/LvroChs.png'
+    public iconUrl (iconHash: string, size = 512): string {
+        return iconHash
+            ? `https://cdn.discordapp.com/icons/${this.id}/${iconHash}.${
+                iconHash.startsWith('a_') ? 'gif' : 'png'}?size=${size}`
+            : 'https://i.imgur.com/LvroChs.png'
     }
 }
 

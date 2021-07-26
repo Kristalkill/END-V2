@@ -9,7 +9,7 @@ export interface Command_Permissions {
 }
 
 export interface Command_Settings {
-    public?: boolean;
+    community?: boolean;
     nsfw?: boolean;
     author?: boolean;
     no_bots?: boolean;
@@ -18,7 +18,7 @@ export interface Command_Settings {
 
 export interface Command_Basic {
     name?: string,
-    aliases?: Array<string>,
+    aliases: Array<string>,
     category?: string
 }
 
@@ -30,7 +30,8 @@ export interface Command_Interface {
     readonly client: Client;
     embed: Embed;
     settings: Command_Settings;
-    basic?: Command_Basic
+    basic: Command_Basic
+    run(message: Message, args: string[]): Promise<command_return>
 
-    run(message: Message, args: string[]): Promise<Error | void | Message>
 }
+export type command_return = Error | undefined | Message

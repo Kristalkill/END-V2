@@ -4,7 +4,7 @@ import MongoDB from '../../bot/Constructions/Classes/MongoDB'
 export default class Rate extends RateLimiterMongo {
     public Limiter: (req: any, res: any, next: any) => void;
 
-    constructor (db: MongoDB) {
+    public constructor (db: MongoDB) {
       super({
         storeClient: db,
         dbName: 'END',
@@ -13,10 +13,10 @@ export default class Rate extends RateLimiterMongo {
       })
       this.Limiter = (req: any, res: any, next: any) => {
         this.consume(req.ip)
-          .then(function () {
+          .then(() => {
             next()
           })
-          .catch(function (err) {
+          .catch((err) => {
             console.log(err)
             res.status(429).json('TooManyRequestShort')
           })

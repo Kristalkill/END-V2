@@ -3,7 +3,7 @@ import { Message, MessageEmbed } from 'discord.js'
 import { humanizeDuration } from '../../index'
 
 export default class Shards extends Command {
-  async run (message: Message): Promise<void | Message> {
+  public async run (message: Message): Promise<Message> {
     try {
       const shard_text = this.language.commands.shards.parameters.shard
       const shard = this.client.shard

@@ -30,11 +30,10 @@ export class Client {
     private baseURL = 'https://discord.com/api/';
 
     /** Create a new OAuth2 Client. */
-    constructor (private options: ClientOptions) {
-    }
+    public constructor (private options: ClientOptions) {}
 
     /** Generates a authorization code link depending on the scopes and redirect URI set. */
-    get authCodeLink (): CodeLink {
+    public get authCodeLink (): CodeLink {
       if (this.options.scopes.length > 0) {
         const state = uid(16)
         return {
@@ -45,7 +44,7 @@ export class Client {
     }
 
     /** Gets the access token for the user to perform further functions. */
-    async getAccess (code: string): Promise<string> {
+    public async getAccess (code: string): Promise<string> {
       if (!code) { throw new TypeError('Authorization code not provided.') }
 
       const response: any = await phin({
@@ -69,7 +68,7 @@ export class Client {
     }
 
     /** Gets a new access token for the user whose access token has expired. */
-    async refreshToken (key: string): Promise<string | void> {
+    public async refreshToken (key: string): Promise<string> {
       const access = this.getAccessKey(key)
 
       try {
@@ -100,7 +99,7 @@ export class Client {
     }
 
     /** Gets the user who has authorized using the OAuth2 flow. */
-    async getUser (key: string): Promise<User> {
+    public async getUser (key: string): Promise<User> {
       const access = this.getAccessKey(key)
 
       try {
@@ -121,7 +120,7 @@ export class Client {
     }
 
     /** Gets the guilds of an authorized user. */
-    async getGuilds (key: string): Promise<Collection<string, Guild>> {
+    public async getGuilds (key: string): Promise<Collection<string, Guild>> {
       const access = this.getAccessKey(key)
       const response: any = await phin({
         url: `${this.baseURL}users/@me/guilds`,
@@ -138,7 +137,7 @@ export class Client {
     }
 
     /** Gets the connected third-party accounts of an authorized user. */
-    async getConnections (key: string): Promise<Collection<string, Connection>> {
+    public async getConnections (key: string): Promise<Collection<string, Connection>> {
       const access = this.getAccessKey(key)
 
       try {

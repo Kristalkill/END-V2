@@ -2,13 +2,13 @@ import Command from '@classes/Command'
 import { Message } from 'discord.js'
 
 export default class Shell extends Command {
-    settings = {
+    public settings = {
       category: 'development',
-      public: false
+      community: false
     }
 
-    async run (message: Message, args: string[]): Promise<void | Message> {
-      return message.channel
+    public async run ({channel}: Message, args: string[]): Promise<Message> {
+      return channel
         .send('Я обробатываю...!!!!')
         .then(async (msg) =>
           msg.edit(

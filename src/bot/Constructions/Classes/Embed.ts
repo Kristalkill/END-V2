@@ -1,6 +1,13 @@
-import { Message, MessageEmbed, MessageEmbedOptions } from 'discord.js'
-
+import {
+  DMChannel,
+  Message,
+  MessageEmbed,
+  MessageEmbedOptions,
+  NewsChannel,
+  TextChannel
+} from 'discord.js'
 export default class Embed {
+
   /* chunk(title, content) {
       if (content.length < 1024) {
         this.fields.push({
@@ -22,35 +29,34 @@ export default class Embed {
       return this;
     }
      */
-  async basic (options: MessageEmbedOptions, { guild: { me }, channel }: Message): Promise<Message> {
-    return await channel.send(new MessageEmbed({ ...options }).setFooter(`${me.user.tag} | ${me.user.username}`, me.user.displayAvatarURL({
-      format: 'png',
-      dynamic: true
-    })).setTimestamp())
+  public async basic(options: MessageEmbedOptions, channel: TextChannel | NewsChannel | DMChannel): Promise<Message> {
+    if(["text","news"].includes(channel.type)){
+      return await channel.send(new MessageEmbed({ ...options }).setFooter(`#6908 | END`,`https://cdn.discordapp.com/avatars/670034507025350661/4c29eb5847bcf88c66af6dbb34d3222c.png`).setTimestamp())
+    }
   }
 
-  async okay (content: string, message: Message): Promise<Message> {
+  public async okay(content: string, channel: TextChannel | NewsChannel | DMChannel): Promise<Message> {
     return this.basic({
       color: '#1bff02',
       title: 'OK',
       description: content
-    }, message)
+    }, channel)
   }
 
-  async error (content: string, message: Message): Promise<Message> {
+  public async error(content: string, channel: TextChannel | NewsChannel | DMChannel): Promise<Message> {
     return this.basic({
       color: '#f80404',
       title: 'Error',
       description: content
-    }, message)
+    }, channel)
   }
 
-  async fun (title: string, message: Message, url?: string | null, description?: string): Promise<Message> {
+  public async fun (title: string, channel: TextChannel | NewsChannel | DMChannel, url?: string, description?: string): Promise<Message> {
     return this.basic({
       color: '#0054ff',
       title: title,
       description: description,
-      image: { url }
-    }, message)
+      image: {url}
+    }, channel)
   }
 }

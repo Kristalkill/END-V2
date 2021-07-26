@@ -1,6 +1,6 @@
 import { Event_Run } from '@interfaces/Event'
 import Event from '@classes/Event'
-import { ClientEvents, MessageEmbed, TextChannel } from 'discord.js'
+import {ClientEvents, MessageEmbed, NewsChannel, TextChannel} from 'discord.js'
 import { Giveaway_Interface, Guild_Interface, Mute_Interface } from '@interfaces/MongoDB'
 
 export default class ready extends Event {
@@ -65,11 +65,11 @@ export default class ready extends Event {
           const role = guild.roles.cache.get(mute_role)
           const user = guild.members.cache.get(userID)
           if (time <= Date.now() || !role) {
-            if (user && user.roles.cache.has(mute_role) === true) {
+            if (user?.roles.cache.has(mute_role)) {
               const { un_muted } = (await this.language(language)).commands.unmute.parameters
               await user.roles.remove(mute_role)
-              const channel = guild.channels.cache.get(channelID) as TextChannel
-              if (channel) return await this.client.embed.okay(`${user} ${un_muted}`, (await channel.messages.fetch()).first())
+              const channel = guild.channels.cache.get(channelID) as TextChannel | NewsChannel
+              if (channel) return await this.client.embed.okay(`${user} ${un_muted}`, channel)
             }
             await this.client.db.delete('mutes', { userID: userID, guildID: guildID })
             this.client.db._mutes.delete(index)

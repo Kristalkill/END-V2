@@ -1,5 +1,10 @@
 {
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "newLine": "lf",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "pretty": true,
     "outDir": "build",
     "noImplicitAny": true,
     "moduleResolution": "node",

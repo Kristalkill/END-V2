@@ -4,6 +4,5 @@ import Message from './Other/Message'
 export default class Systems {
     public message: Message = new Message(this.client)
 
-    constructor (protected readonly client: Client) {
-    }
+    public constructor (protected readonly client: Client) {}
 }

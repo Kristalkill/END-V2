@@ -1,14 +1,14 @@
-import { Message, MessageEmbed } from 'discord.js'
+import {Message, MessageEmbed} from 'discord.js'
 import Command from '@classes/Command'
 
 export default class Avatar extends Command {
-  async run (message: Message, [user]: string[]): Promise<void | Message> {
-    const member = await this.member(message, user) || message.member
+  public async run ({guild, channel, mentions, author, member}: Message, [user]: string[]): Promise<Message> {
+    const _member = await this.member({authorID: author.id , channel: channel, guild: guild, mentions: mentions.users}, user) || member
     if (this.stop === true) return
-    await message.channel.send(new MessageEmbed()
+    await channel.send(new MessageEmbed()
       .setColor('RANDOM')
-      .setTitle(`${this.language.commands.avatar.parameters.avatar} ${member.user.username}!`)
-      .setImage(member.user.avatarURL({
+      .setTitle(`${this.language.commands.avatar.parameters.avatar} ${_member.user.username}!`)
+      .setImage(_member.user.avatarURL({
         dynamic: true
       }))
       .setTimestamp())

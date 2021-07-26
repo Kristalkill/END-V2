@@ -1,47 +1,47 @@
 /** A discord user who has authorized your app to have access to their data. */
 export default class User {
     /** The user's discord username. */
-    username: string;
+    public username: string;
     /** The user's locale. */
-    locale: string
+    public locale: string
     /** Whether the user has enabled 2-factor authentication. */
-    isMFAEnabled: boolean;
+    public isMFAEnabled: boolean;
     /** The user's discriminator (e.g. '0001'). */
-    discriminator: string;
+    public discriminator: string;
     /** The user's unique discord ID. */
-    id: string;
+    public id: string;
     /** The user's E-Mail ID. */
-    emailId: string;
+    public emailId: string;
     /** Whether the user's E-Mail ID has been verified. */
-    emailVerified: boolean;
+    public emailVerified: boolean;
     /** The user's profile's flags. */
-    userFlags: string[];
+    public userFlags: string[];
     /** The user's avatar hash. */
-    avatarHash: string;
+    public avatarHash: string;
     /** The premium subscription type. */
-    premiumType: string;
+    public premiumType: string;
     /** Whether the user is a discord bot. */
-    bot: boolean;
+    public bot: boolean;
     /** Get the URL of a user's display avatar. */
-    readonly displayAvatarURL: string;
+    public readonly displayAvatarURL: string;
     /** Tag of the user (e.g. ADAMJR#0001) */
-    readonly tag: string;
+    public readonly tag: string;
 
-    constructor ({
+    public constructor ({
       username,
       locale,
       mfa_enabled,
       discriminator,
       id, email, verified, avatar, premium_type, bot, flags
-    }: User_Contructor) {
+    }: User_Constructor) {
       this.username = username
       this.locale = locale
       this.isMFAEnabled = mfa_enabled
-      this.discriminator = parseInt(discriminator).toString().padStart(4, '0')
+      this.discriminator = parseInt(discriminator, 10).toString().padStart(4, '0')
       this.id = id
-      this.emailId = email
-      this.emailVerified = verified
-      this.avatarHash = avatar
+      this.emailId = email || ''
+      this.emailVerified = verified || false
+      this.avatarHash = avatar || ''
       this.userFlags = []
       this.premiumType = premium_type === 0 ? 'None' : premium_type === 1 ? 'Nitro Classic' : 'Nitro'
       this.bot = bot
@@ -52,21 +52,21 @@ export default class User {
     }
 
     /** The timestamp of the creation of the user's account. */
-    get createdTimestamp (): number {
-      return parseInt((BigInt(this.id) >> BigInt(22)).toString()) + 1420070400000
+    public get createdTimestamp (): number {
+      return parseInt((BigInt(this.id) >> BigInt(22)).toString(), 10) + 1420070400000
     }
 
     /** The time of creation of the user's account. */
-    get createdAt (): Date {
+    public get createdAt (): Date {
       return new Date(this.createdTimestamp)
     }
 
     /** Get the URL of a user's avatar, with options. */
-    avatarURL (options: AvatarOptions = { size: 512 }): string {
+    public avatarURL (options: AvatarOptions = { size: 512 }): string {
       const extension = (this.avatarHash?.startsWith('a_') && options.dynamic) ? 'gif' : 'png'
 
       return `https://cdn.discordapp.com/${this.avatarHash ? '' : 'embed/'}avatars/${
-            this.avatarHash ? `${this.id}/${this.avatarHash}` : parseInt(this.discriminator) % 5
+            this.avatarHash ? `${this.id}/${this.avatarHash}` : parseInt(this.discriminator, 10) % 5
         }.${(this.avatarHash) ? extension : 'png'}?size=${options.size}`
     }
 
@@ -89,7 +89,7 @@ export interface AvatarOptions {
     size?: number;
 }
 
-interface User_Contructor {
+interface User_Constructor {
     username: string,
     locale: string,
     mfa_enabled: boolean,

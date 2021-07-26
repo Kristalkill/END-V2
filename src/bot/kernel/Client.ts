@@ -17,9 +17,9 @@ export default class extends Client {
     public embed: Embed = new Embed()
     public db: MongoDB = new MongoDB(process.env.dataURL);
     public logger: Logger = new Logger();
-    public utils: Util
+    public utils: Util = new Util();
     public loader: Loader
-    systems: Systems;
+    public systems: Systems;
 
     public constructor () {
       super({
@@ -33,7 +33,6 @@ export default class extends Client {
         messageSweepInterval: 200,
         restTimeOffset: 0
       })
-      this.utils = new Util(this)
       this.loader = new Loader(this)
       this.systems = new Systems(this)
     }

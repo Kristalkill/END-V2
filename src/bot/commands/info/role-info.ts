@@ -1,11 +1,11 @@
-import { Message, MessageEmbed } from 'discord.js'
+import {Message, MessageEmbed} from 'discord.js'
 import Command from '@classes/Command'
 
 export default class roleInfo extends Command {
-  async run (message: Message, [role_args]: string[]): Promise<void | Message> {
-    const role = await this.Role(message, role_args)
+  public async run ({guild, channel, mentions}: Message, [role_args]: string[]): Promise<Message> {
+    const role = await this.Role(guild, mentions.roles, channel, role_args)
     if (this.stop) return
-    return message.channel.send(new MessageEmbed()
+    return channel.send(new MessageEmbed()
       .setTitle(role.name)
       .setDescription(`
                 ID: \`${role.id}\`

@@ -16,7 +16,7 @@ export default class Event implements Event_Interface {
       this.emitter = (emitter ? (this.client as any)[emitter] : emitter) || this.client
     }
 
-    async language (preferredLocale: string): Promise<Language> {
-      return await import(`../languages/${preferredLocale.slice(0, 2) || 'en'}`)
+    public async language (preferredLocale: string): Promise<Language> {
+      return await import(`@languages/${preferredLocale.slice(0, 2) || 'en'}`)
     }
 }

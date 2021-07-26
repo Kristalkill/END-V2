@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-import { Client } from './client'
+import { Client } from './Client'
 import bodyParser from 'body-parser'
 import { resolve } from 'path'
 import { config } from 'dotenv'
@@ -18,54 +18,36 @@ export default class API {
     public db: MongoDB = new MongoDB()
     public manager: Manager;
     public Client = new Client({
-      id: process.env.CLIENT_ID,
-      secret: process.env.CLIENT_SECRET,
+      id: process.env.CLIENT_ID || '',
+      secret: process.env.CLIENT_SECRET || '',
       redirectURI: `${process.env.DASHBOARD_URL}/auth`,
       scopes: ['identify', 'guilds']
     })
 
     public app = express()
 
-    constructor (manager: Manager) {
+    public constructor (manager: Manager) {
       this.manager = manager
-      void this.start()
+      this.db.start().then(() => this.start())
     }
 
-    async start (): Promise<void> {
-      await this.db.start()
-      await this.run()
+    public async commands (): Promise<Collection<string, Command_Interface>> {
+      return await this.manager.shards.first()?.eval(`this.commands.map(x => x.basic).filter(x => x.category !== 'development')`)
     }
 
-    async run (): Promise<void> {
-      const PORT = process.env.PORT || 3001
-      this.app.listen((PORT), () => console.log(`API is live on port ${PORT}`))
-      this.app.use(cors())
-        .use(bodyParser.json())
-        .use(new Rate(this.db).Limiter)
-      const dashboardPath = resolve('../dist')
-      this.app
-        .use('/api', new Routes(this).router)
-        .use(express.static(dashboardPath))
-        .all('*', (req, res) => res.status(200))
-    }
-
-    async commands (): Promise<Collection<string, Command_Interface>> {
-      return await this.manager.shards.first().eval(`this.commands.map(x => x.basic).filter(x => x.category !== 'development')`)
-    }
-
-    async users (): Promise<Array<User_Interface>> {
+    public async users (): Promise<Array<User_Interface>> {
       return await this.db.getMany<User_Interface>('users')
     }
 
-    async db_guilds (): Promise<Array<Guild_Interface>> {
+    public  async db_guilds (): Promise<Array<Guild_Interface>> {
       return await this.db.getMany<Guild_Interface>('guilds')
     }
 
-    async guilds (): Promise<Collection<string, Guild>> {
+    public async guilds (): Promise<Collection<string, Guild>> {
       return new Collection((await this.manager.broadcastEval('Array.from(this.guilds.cache)')).flat())
     }
 
-    async stats (): Promise<number[]> {
+    public async stats (): Promise<number[]> {
       const reducer = (accumulator: number, currentValue: number) => accumulator + currentValue
       return [
         (await this.manager.broadcastEval('(process.cpuUsage().user/1024/1024/100)')).reduce(reducer),
@@ -76,5 +58,17 @@ export default class API {
         (await this.manager.fetchClientValues('users.cache.size')).reduce(reducer),
         (await this.manager.fetchClientValues('ws.ping')).reduce(reducer) / this.manager.shards.size
       ].flat()
+    }
+    private async start (): Promise<void> {
+        const PORT = process.env.PORT || 3001
+        this.app.listen((PORT), () => console.log(`API is live on port ${PORT}`))
+        this.app.use(cors())
+            .use(bodyParser.json())
+            .use(new Rate(this.db).Limiter)
+        const dashboardPath = resolve('../dist')
+        this.app
+            .use('/api', new Routes(this).router)
+            .use(express.static(dashboardPath))
+            .all('*', (_req, res) => res.status(200))
     }
 }

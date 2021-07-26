@@ -1,25 +1,25 @@
 import { Shard } from 'discord.js'
 
 export default class Logger {
-    public shard: Shard
+    public shard: Shard | undefined
 
-    get id (): number | '?' {
-      return this.shard && this.shard.id ? this.shard.id : '?'
+    public get id (): number | '?' {
+      return this.shard?.id ? this.shard.id : '?'
     }
 
-    debug (title: string, message: string): void {
+    public debug (title: string, message: string): void {
       console.log(
             `[Process ${process.pid}] [Cluster ${this.id}] [${title}] ${message}`
       )
     }
 
-    log (title: string, message: string): void {
+    public log (title: string, message: string): void {
       console.log(
             `[Process ${process.pid}] [Cluster ${this.id}] [${title}] ${message}`
       )
     }
 
-    error (error: string | Error): void {
+    public error (error: string | Error): void {
       console.error(`[Process ${process.pid}] [Cluster ${this.id}] `, error)
     }
 }

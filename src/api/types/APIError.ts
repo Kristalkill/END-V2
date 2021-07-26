@@ -10,7 +10,7 @@ const errors = new Map<number, string>([
 ])
 
 export default class APIError extends Error {
-  constructor (
+  public constructor (
         public statusCode: number,
         ...params: any[]) {
     super(...params)
