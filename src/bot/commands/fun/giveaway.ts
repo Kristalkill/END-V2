@@ -1,7 +1,10 @@
 import Command from '@classes/Command'
 import { Message, MessageEmbed, TextChannel } from 'discord.js'
 import ms from 'ms'
-import { humanizeDuration } from '../../index'
+import {humanizeDuration} from '@kernel/Client'
+
+
+
 import { Giveaway_Interface } from '@interfaces/MongoDB'
 
 export default class Giveaway extends Command {

@@ -1,6 +1,7 @@
 import { Shard, ShardingManager } from 'discord.js'
 import { config } from 'dotenv'
 import API from './api/server'
+import path from "path";
 
 config()
 
@@ -8,7 +9,7 @@ export class Manager extends ShardingManager {
     public api!: API;
 
     public constructor () {
-      super(__dirname + '/bot/index.js', {
+      super(path.join(__dirname, 'bot/index.js'), {
         totalShards: 1,
         token: process.env.TOKEN,
         mode: 'process'
@@ -28,12 +29,10 @@ export class Manager extends ShardingManager {
           console.log(`[SHARDS] Shard ${shard.id} is dead`)
         })
       })
-    }
-
-    public start (): void {
       this.spawn(this.totalShards).then(() => {
         this.api = new API(this)
       })
     }
 }
-new Manager().start()
+// eslint-disable-next-line no-new
+new Manager()

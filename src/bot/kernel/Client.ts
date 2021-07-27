@@ -1,4 +1,7 @@
-import { BitField, Client, Collection, Intents, Permissions, PermissionString } from 'discord.js'
+export * from '@kernel/Prototypes/Prototypes'
+import { HumanizeDuration, HumanizeDurationLanguage } from 'humanize-duration-ts'
+export const humanizeDuration = new HumanizeDuration(new HumanizeDurationLanguage())
+import { BitField, Client as BaseClient, Collection, Intents, Permissions, PermissionString } from 'discord.js'
 import { Config } from '@interfaces/Config'
 import Loader from './Loader'
 import Util from '../Util/Util'
@@ -9,7 +12,7 @@ import Command from '@classes/Command'
 import Event from '@classes/Event'
 import Systems from '../Systems/Systems'
 
-export default class extends Client {
+export default class Client extends BaseClient {
     public defaultPerms: Readonly<BitField<PermissionString>> = new Permissions().freeze();
     public commands: Collection<string, Command> = new Collection();
     public events: Collection<string, Event> = new Collection();
@@ -37,9 +40,10 @@ export default class extends Client {
       this.systems = new Systems(this)
     }
 
-    public async start (config: Config): Promise<void> {
+    public async start (config: Config): Promise<Date> {
       await this.loader.load()
       await this.db.connect()
       await super.login(config.token)
+      return this.readyAt
     }
 }

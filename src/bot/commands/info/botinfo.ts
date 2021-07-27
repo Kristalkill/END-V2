@@ -1,6 +1,9 @@
 import { Message, MessageEmbed, version } from 'discord.js'
 import Command from '@classes/Command'
-import { humanizeDuration } from '../../index'
+import {humanizeDuration} from '@kernel/Client'
+
+
+
 
 export default class BotInfo extends Command {
   public async run ({guild, channel, createdTimestamp}: Message): Promise<Message> {

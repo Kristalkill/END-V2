@@ -45,6 +45,9 @@
       ],
       "@languages/*": [
         "src/bot/languages/*"
+      ],
+      "@bot/*": [
+        "src/bot/*"
       ]
     }
   },

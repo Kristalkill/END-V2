@@ -2,7 +2,10 @@ import Command from '@classes/Command'
 import {Message} from 'discord.js'
 
 import ms from 'ms'
-import { humanizeDuration } from '../../index'
+import {humanizeDuration} from '@kernel/Client'
+
+
+
 import { Mute_Interface } from '@interfaces/MongoDB'
 
 export default class mute extends Command {

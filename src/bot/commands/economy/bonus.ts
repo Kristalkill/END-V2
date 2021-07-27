@@ -1,5 +1,8 @@
 import Command from '@classes/Command'
-import { humanizeDuration } from '../../index'
+import {humanizeDuration} from '@kernel/Client'
+
+
+
 import {Message} from 'discord.js'
 
 

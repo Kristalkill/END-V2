@@ -32,7 +32,8 @@ export default class API {
     }
 
     public async commands (): Promise<Collection<string, Command_Interface>> {
-      return await this.manager.shards.first()?.eval(`this.commands.map(x => x.basic).filter(x => x.category !== 'development')`)
+      return this.manager.shards.first()?.eval(`this.commands.map(x => x.basic)
+		  .filter(x => x.category !== 'development')`);
     }
 
     public async users (): Promise<Array<User_Interface>> {

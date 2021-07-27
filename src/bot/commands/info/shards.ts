@@ -1,6 +1,9 @@
 import Command from '@classes/Command'
 import { Message, MessageEmbed } from 'discord.js'
-import { humanizeDuration } from '../../index'
+import {humanizeDuration} from '@kernel/Client'
+
+
+
 
 export default class Shards extends Command {
   public async run (message: Message): Promise<Message> {

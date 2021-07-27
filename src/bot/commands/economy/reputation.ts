@@ -1,6 +1,9 @@
 import Command from '@classes/Command'
 import {Message, MessageEmbed} from 'discord.js'
-import { humanizeDuration } from '../../index'
+import {humanizeDuration} from '@kernel/Client'
+
+
+
 
 export default class Reputation extends Command {
   public async run({guild, channel, mentions, author}: Message, [user_args, typed]: string[]): Promise<Message> {

@@ -9,4 +9,6 @@ DISABLE:
   - COPYPASTE # Comment to disable checks of abusive copy-pastes
   - SPELL # Comment to disable checks of spelling mistakes # - SPELL # Uncomment to disable checks of spelling mistakes
 SHOW_ELAPSED_TIME: true
+DISABLE_LINTERS:
+  - JAVASCRIPT_STANDARD
 FILEIO_REPORTER: true

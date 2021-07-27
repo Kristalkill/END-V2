@@ -7,10 +7,11 @@ import {
   PermissionResolvable, PermissionString,
   TextChannel, User
 } from 'discord.js'
-import Client from '@kernel/Client'
+import Client, {humanizeDuration} from '@kernel/Client'
 import { Block_Interface, Guild_Interface, User_Interface } from '@interfaces/MongoDB'
-import Language from '../../languages/Language'
-import { humanizeDuration } from '../../index'
+import Language from '@languages/Language'
+
+
 import Command from '@classes/Command'
 import { Guild_basic, User_basic } from '@util/Base Values/MongoDB'
 import {Command_Settings} from "@interfaces/Command";
@@ -177,17 +178,10 @@ export default class {
 
   private async database_check(guildID: string, userID: string, ownerID: string | undefined, preferredLocale: string): Promise<[Guild_Interface, Block_Interface, User_Interface]> {
     const {db} = this.client
-    let res = await db.getOne<Guild_Interface>('guilds', {guildID: guildID})
+    const res = await db.getOrInsert<Guild_Interface>('guilds', {guildID: guildID}, Guild_basic(guildID, ownerID, preferredLocale))
     const Block_res = await db.getOne<Block_Interface>('blocks', {id: userID})
-    let data = await db.getOne<User_Interface>('users', {guildID: guildID, userID: userID})
-    if (!res && ownerID) {
-      await db.insert_one<Guild_Interface>('guilds', Guild_basic(guildID, ownerID, preferredLocale))
-      res = await db.getOne<Guild_Interface>('guilds', {guildID: guildID})
-    }
-    if (!data) {
-      await db.insert_one<User_Interface>('users', User_basic(userID, guildID))
-      data = await db.getOne<User_Interface>('users', {guildID: guildID, userID: userID})
-    }
+    const data = await db.getOrInsert<User_Interface>('users', {guildID: guildID, userID: userID},User_basic(userID, guildID) )
+
     return [res, Block_res, data]
   }
 

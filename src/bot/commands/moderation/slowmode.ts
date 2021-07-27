@@ -1,7 +1,7 @@
 import Command from '@classes/Command'
 import {Message} from 'discord.js'
 import ms from 'ms'
-import { humanizeDuration } from '../../index'
+import {humanizeDuration} from '@kernel/Client'
 
 export default class SlowMode extends Command {
   public async run ({channel}: Message, [time]: string[]): Promise<Message> {

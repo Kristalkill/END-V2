@@ -8,7 +8,8 @@
     "@classes": "build/bot/Constructions/Classes",
     "@interfaces": "build/bot/Constructions/Interfaces",
     "@util": "build/bot/Util",
-    "@languages": "build/bot/languages"
+    "@languages": "build/bot/languages",
+    "@bot": "build/bod"
   },
   "dependencies": {
     "@2pg/oauth": "^1.0.8",
@@ -77,5 +78,5 @@
     "./types",
     "./node_modules/@types"
   ],
-  "version": "2.0.0"
+  "version": "2.1.0"
 }
