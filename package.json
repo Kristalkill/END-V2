@@ -30,7 +30,7 @@
     "ms": "^2.1.2",
     "natural": "^5.0.3",
     "node-fetch": "^2.6.1",
-    "npm": "^7.18.1",
+    "npm": "^8.11.0",
     "os-utils": "^0.0.14",
     "rate-limiter-flexible": "^2.2.2",
     "shoukaku": "^1.6.4",
